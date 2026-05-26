@@ -1,0 +1,471 @@
+@import "tailwindcss";
+
+/* ============================================================
+   CREATORVERSE OS — Design System Tokens
+   ============================================================ */
+
+@theme {
+  /* ---- Creatorverse Y2K Theme Palette ---- */
+  --color-midnight: #0A0510;       /* deep violet (dark mode base) */
+  --color-midnight-raised: #140C20;
+  --color-midnight-soft: #1D152C;
+  --color-slate-muted: #2C2C2C;
+
+  --color-snow: #FFF7F3;           /* peach cream (light mode base) */
+  --color-snow-raised: #FFFFFF;
+  --color-snow-soft: #FFEBE6;
+
+  /* ---- Accent: Hot Magenta (Mapped to Violet for compatibility) ---- */
+  --color-violet-50: #FFF0FB;
+  --color-violet-100: #FFE1FA;
+  --color-violet-200: #FFC4F4;
+  --color-violet-300: #FF85E7;
+  --color-violet-400: #FF3BD6;
+  --color-violet: #FF00B8;
+  --color-violet-600: #D60099;
+  --color-violet-700: #AD007B;
+  --color-violet-800: #85005E;
+  --color-violet-900: #5C0041;
+
+  /* ---- Accent: Electric Cyan (Mapped to Cyan/Coral for compatibility) ---- */
+  --color-cyan-50: #F0FDFF;
+  --color-cyan-100: #E0FCFF;
+  --color-cyan-200: #B8F8FF;
+  --color-cyan-300: #7AEEFF;
+  --color-cyan-400: #3DDCFF;
+  --color-cyan: #00E4FF;
+  --color-cyan-500: #00E4FF;
+  --color-cyan-600: #00B6CC;
+  --color-cyan-700: #008899;
+
+  /* ---- Accent: Acid Green / Neon Yellow (Mapped to Mango for compatibility) ---- */
+  --color-mango-50: #FDFFE5;
+  --color-mango-100: #FBFFCC;
+  --color-mango-200: #F4FF99;
+  --color-mango-300: #ECFF66;
+  --color-mango-400: #DFFF33;
+  --color-mango: #A6FF00;
+  --color-mango-500: #A6FF00;
+  --color-mango-600: #BBE600;
+  --color-mango-700: #88A600;
+
+  /* ---- Additional Accents ---- */
+  --color-neon-yellow: #FFE600;
+  --color-hot-red: #FF3B30;
+
+  /* ---- Semantic ---- */
+  --color-success: #A6FF00;        /* acid green serves as success */
+  --color-success-dark: #88A600;
+  --color-error: #FF3B30;
+  --color-error-dark: #D6221A;
+  --color-warning: #FFE600;
+  --color-warning-dark: #CCA800;
+  --color-info: #00E4FF;
+  --color-info-dark: #008899;
+
+  /* ---- Typography ---- */
+  --font-display: var(--font-display), 'Space Grotesk', system-ui, -apple-system, sans-serif;
+  --font-sans: var(--font-inter), 'Inter', system-ui, -apple-system, sans-serif;
+  --font-retro: var(--font-retro), 'VT323', monospace;
+  --font-mono: var(--font-jetbrains), 'JetBrains Mono', 'Fira Code', monospace;
+
+  /* ---- Border Radius ---- */
+  --radius-sm: 4px;
+  --radius-md: 8px;
+  --radius-lg: 12px;
+  --radius-xl: 16px;
+  --radius-2xl: 24px;
+  --radius-full: 9999px;
+}
+
+/* ============================================================
+   Semantic CSS Variables (Light / Dark)
+   ============================================================ */
+
+@layer base {
+  :root {
+    --background: #FFF7F3; /* peach cream */
+    --foreground: #1C1C1C; /* neutral dark text */
+    --card: #FFFFFF;
+    --card-foreground: #1C1C1C;
+    --primary: #FF00B8; /* hot magenta */
+    --primary-foreground: #FFFFFF;
+    --secondary: #00E4FF; /* electric cyan */
+    --secondary-foreground: #1C1C1C;
+    --muted: #FFEBE6; /* soft peach cream */
+    --muted-foreground: #666666;
+    --destructive: #FF3B30; /* hot red */
+    --destructive-foreground: #FFFFFF;
+    --border: #1C1C1C; /* chunky dark borders for Y2K neo-brutalism */
+    --input: #1C1C1C;
+    --ring: #FF00B8;
+    --accent: #A6FF00; /* acid green */
+    --accent-foreground: #1C1C1C;
+  }
+
+  .dark {
+    --background: #0A0510; /* deep violet */
+    --foreground: #F8F8F8; /* neutral light text */
+    --card: #140C20;
+    --card-foreground: #F8F8F8;
+    --primary: #FF00B8; /* hot magenta */
+    --primary-foreground: #0A0510;
+    --secondary: #00E4FF; /* electric cyan */
+    --secondary-foreground: #F8F8F8;
+    --muted: #1D152C;
+    --muted-foreground: #A8A29E;
+    --destructive: #FF3B30;
+    --destructive-foreground: #FFFFFF;
+    --border: #2C2C2C;
+    --input: #2C2C2C;
+    --ring: #FF00B8;
+    --accent: #A6FF00; /* acid green */
+    --accent-foreground: #1C1C1C;
+  }
+
+  * {
+    border-color: var(--border);
+  }
+
+  body {
+    background-color: var(--background);
+    color: var(--foreground);
+    font-family: var(--font-sans);
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+  }
+
+  ::selection {
+    background-color: rgba(255, 0, 184, 0.25);
+    color: var(--foreground);
+  }
+
+  .dark ::selection {
+    background-color: rgba(255, 0, 184, 0.4);
+    color: #FFFFFF;
+  }
+}
+
+/* ============================================================
+   Gradient Utilities
+   ============================================================ */
+
+@utility gradient-hero {
+  background: linear-gradient(135deg, #FF00B8 0%, #00E4FF 50%, #A6FF00 100%);
+}
+
+@utility gradient-cta {
+  background: linear-gradient(135deg, #FF00B8 0%, #00E4FF 100%);
+}
+
+@utility gradient-warm {
+  background: linear-gradient(135deg, #A6FF00 0%, #FF00B8 100%);
+}
+
+@utility gradient-success {
+  background: linear-gradient(135deg, #A6FF00 0%, #FFE600 100%);
+}
+
+@utility gradient-premium {
+  background: linear-gradient(135deg, #FF00B8 0%, #00E4FF 50%, #A6FF00 100%);
+}
+
+@utility gradient-card {
+  background: linear-gradient(135deg, rgba(255, 0, 184, 0.08) 0%, rgba(0, 228, 255, 0.05) 100%);
+}
+
+@utility gradient-midnight {
+  background: radial-gradient(ellipse at 50% 0%, rgba(255, 0, 184, 0.15) 0%, transparent 60%);
+}
+
+/* ---- Text Gradients ---- */
+
+@utility text-gradient-hero {
+  background: linear-gradient(135deg, #FF00B8 0%, #00E4FF 50%, #A6FF00 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+@utility text-gradient-violet {
+  background: linear-gradient(135deg, #FF00B8 0%, #FF85E7 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+@utility text-gradient-premium {
+  background: linear-gradient(135deg, #FF00B8 0%, #00E4FF 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+/* ============================================================
+   Glassmorphism
+   ============================================================ */
+
+@utility glass {
+  background-color: rgba(255, 255, 255, 0.72);
+  backdrop-filter: blur(20px) saturate(180%);
+  border: 1px solid rgba(0, 0, 0, 0.06);
+}
+
+@utility glass-dark {
+  background-color: rgba(10, 5, 16, 0.75);
+  backdrop-filter: blur(20px) saturate(180%);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+@utility glass-card {
+  background-color: rgba(255, 255, 255, 0.06);
+  backdrop-filter: blur(20px) saturate(180%);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+/* ============================================================
+   Shadow System
+   ============================================================ */
+
+@utility shadow-card {
+  box-shadow: 4px 4px 0px 0px var(--foreground);
+}
+
+@utility shadow-card-hover {
+  box-shadow: 6px 6px 0px 0px var(--foreground);
+}
+
+@utility shadow-elevated {
+  box-shadow: 8px 8px 0px 0px var(--foreground);
+}
+
+@utility shadow-flat-sm {
+  box-shadow: 2px 2px 0px 0px var(--foreground);
+}
+
+@utility shadow-flat-md {
+  box-shadow: 4px 4px 0px 0px var(--foreground);
+}
+
+@utility shadow-flat-lg {
+  box-shadow: 8px 8px 0px 0px var(--foreground);
+}
+
+@utility shadow-flat-xl {
+  box-shadow: 12px 12px 0px 0px var(--foreground);
+}
+
+@utility shadow-glow-violet {
+  box-shadow: 0 0 40px rgba(255, 0, 184, 0.35);
+}
+
+@utility shadow-glow-coral {
+  box-shadow: 0 0 30px rgba(0, 228, 255, 0.3);
+}
+
+@utility shadow-glow-cyan {
+  box-shadow: 0 0 30px rgba(0, 228, 255, 0.3);
+}
+
+@utility shadow-glow-mango {
+  box-shadow: 0 0 30px rgba(166, 255, 0, 0.35);
+}
+
+@utility neo-btn {
+  border: 2px solid var(--foreground);
+  box-shadow: 3px 3px 0px 0px var(--foreground);
+  transition: all 0.15s cubic-bezier(0.34, 1.56, 0.64, 1);
+  &:hover {
+    transform: translate(-2px, -2px);
+    box-shadow: 5px 5px 0px 0px var(--foreground);
+  }
+  &:active {
+    transform: translate(1px, 1px);
+    box-shadow: 1px 1px 0px 0px var(--foreground);
+  }
+}
+
+@utility neo-card {
+  border: 2px solid var(--foreground);
+  box-shadow: 5px 5px 0px 0px var(--foreground);
+  transition: all 0.2s cubic-bezier(0.34, 1.56, 0.64, 1);
+  &:hover {
+    transform: translate(-3px, -3px);
+    box-shadow: 8px 8px 0px 0px var(--foreground);
+  }
+  &:active {
+    transform: translate(0px, 0px);
+    box-shadow: 4px 4px 0px 0px var(--foreground);
+  }
+}
+
+/* ============================================================
+   Focus Ring
+   ============================================================ */
+
+@utility focus-ring {
+  &:focus-visible {
+    outline: none;
+    box-shadow: 0 0 0 2px var(--background), 0 0 0 4px var(--ring);
+  }
+}
+
+/* ============================================================
+   Animations
+   ============================================================ */
+
+@keyframes float {
+  0%, 100% { transform: translateY(0px); }
+  50% { transform: translateY(-8px); }
+}
+
+@keyframes float-slow {
+  0%, 100% { transform: translateY(0px); }
+  50% { transform: translateY(-12px); }
+}
+
+@keyframes shimmer {
+  0% { background-position: -200% 0; }
+  100% { background-position: 200% 0; }
+}
+
+@keyframes fade-up {
+  0% { opacity: 0; transform: translateY(24px); }
+  100% { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes fade-in {
+  0% { opacity: 0; }
+  100% { opacity: 1; }
+}
+
+@keyframes slide-in-right {
+  0% { opacity: 0; transform: translateX(20px); }
+  100% { opacity: 1; transform: translateX(0); }
+}
+
+@keyframes pulse-glow {
+  0%, 100% { box-shadow: 0 0 20px rgba(255, 0, 184, 0.2); }
+  50% { box-shadow: 0 0 40px rgba(255, 0, 184, 0.5); }
+}
+
+@keyframes glitch {
+  0% { transform: translate(0) }
+  20% { transform: translate(-1.5px, 1.5px) }
+  40% { transform: translate(-1.5px, -1.5px) }
+  60% { transform: translate(1.5px, 1.5px) }
+  80% { transform: translate(1.5px, -1.5px) }
+  100% { transform: translate(0) }
+}
+
+@keyframes crt-flicker {
+  0% { opacity: 0.98; }
+  50% { opacity: 1; }
+  100% { opacity: 0.99; }
+}
+
+@keyframes count-up {
+  0% { opacity: 0; transform: translateY(10px); }
+  100% { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes notification-slide {
+  0% { opacity: 0; transform: translateX(30px) scale(0.95); }
+  10% { opacity: 1; transform: translateX(0) scale(1); }
+  90% { opacity: 1; transform: translateX(0) scale(1); }
+  100% { opacity: 0; transform: translateX(-10px) scale(0.98); }
+}
+
+@utility animate-float {
+  animation: float 4s ease-in-out infinite;
+}
+
+@utility animate-float-slow {
+  animation: float-slow 6s ease-in-out infinite;
+}
+
+@utility animate-shimmer {
+  animation: shimmer 1.5s linear infinite;
+  background-size: 200% 100%;
+}
+
+@utility animate-fade-up {
+  animation: fade-up 0.5s cubic-bezier(0.22, 1, 0.36, 1) forwards;
+}
+
+@utility animate-fade-in {
+  animation: fade-in 0.3s ease-out forwards;
+}
+
+@utility animate-slide-in-right {
+  animation: slide-in-right 0.3s cubic-bezier(0.22, 1, 0.36, 1) forwards;
+}
+
+@utility animate-pulse-glow {
+  animation: pulse-glow 2s ease-in-out infinite;
+}
+
+@utility animate-notification {
+  animation: notification-slide 4s cubic-bezier(0.22, 1, 0.36, 1) forwards;
+}
+
+@utility animate-glitch {
+  animation: glitch 0.3s steps(2) infinite;
+}
+
+@utility shadow-crt {
+  background: linear-gradient(rgba(18, 16, 16, 0) 50%, rgba(0, 0, 0, 0.12) 50%), linear-gradient(90deg, rgba(255, 0, 0, 0.04), rgba(0, 255, 0, 0.02), rgba(0, 0, 255, 0.04));
+  background-size: 100% 4px, 6px 100%;
+}
+
+/* ============================================================
+   Skeleton Loader
+   ============================================================ */
+
+@utility skeleton {
+  background: linear-gradient(
+    90deg,
+    var(--muted) 25%,
+    rgba(255, 0, 184, 0.05) 50%,
+    var(--muted) 75%
+  );
+  background-size: 200% 100%;
+  animation: shimmer 1.5s linear infinite;
+  border-radius: var(--radius-md);
+}
+
+/* ============================================================
+   Scrollbar
+   ============================================================ */
+
+@layer base {
+  ::-webkit-scrollbar {
+    width: 6px;
+    height: 6px;
+  }
+
+  ::-webkit-scrollbar-track {
+    background: transparent;
+  }
+
+  ::-webkit-scrollbar-thumb {
+    background: var(--border);
+    border-radius: 9999px;
+  }
+
+  ::-webkit-scrollbar-thumb:hover {
+    background: var(--muted-foreground);
+  }
+}
+
+/* ============================================================
+   Reduced Motion
+   ============================================================ */
+
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+}

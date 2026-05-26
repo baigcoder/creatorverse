@@ -1,0 +1,17 @@
+packages:
+  - "apps/*"
+  - "packages/*"
+allowBuilds:
+  '@nestjs/core': true
+  '@prisma/engines': true
+  msgpackr-extract: true
+  prisma: true
+onlyBuiltDependencies:
+  - "@nestjs/core"
+  - "@prisma/client"
+  - "@prisma/engines"
+  - argon2
+  - esbuild
+  - msgpackr-extract
+  - prisma
+  - sharp

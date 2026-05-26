@@ -1,0 +1,47 @@
+{
+  "name": "skillmango-ai",
+  "version": "0.1.0",
+  "private": true,
+  "description": "SkillMango AI - AI-powered creator learning platform",
+  "workspaces": [
+    "apps/*",
+    "packages/*"
+  ],
+  "scripts": {
+    "clean:web": "node scripts/clean-next.cjs",
+    "dev": "turbo dev",
+    "dev:api": "turbo dev --filter=@skillmango/api",
+    "dev:web": "turbo dev --filter=@skillmango/web",
+    "prebuild": "pnpm clean:web",
+    "build": "turbo build",
+    "build:api": "turbo build --filter=@skillmango/api",
+    "build:web": "pnpm clean:web && turbo build --filter=@skillmango/web",
+    "lint": "turbo lint",
+    "lint:api": "turbo lint --filter=@skillmango/api",
+    "lint:web": "turbo lint --filter=@skillmango/web",
+    "typecheck": "turbo typecheck",
+    "test": "turbo test",
+    "pretest:e2e": "pnpm clean:web",
+    "test:e2e": "playwright test",
+    "test:api": "turbo test --filter=@skillmango/api",
+    "test:web": "turbo test --filter=@skillmango/web",
+    "db:generate": "pnpm --filter @skillmango/api db:generate",
+    "db:migrate": "pnpm --filter @skillmango/api db:migrate",
+    "db:seed": "pnpm --filter @skillmango/api db:seed",
+    "db:studio": "pnpm --filter @skillmango/api db:studio"
+  },
+  "devDependencies": {
+    "@eslint/js": "^10.0.1",
+    "@next/eslint-plugin-next": "^16.2.6",
+    "@playwright/test": "^1.60.0",
+    "eslint": "^9.39.4",
+    "turbo": "^2.5.0",
+    "typescript": "^5.8.3",
+    "typescript-eslint": "^8.59.4"
+  },
+  "packageManager": "pnpm@11.1.3",
+  "engines": {
+    "node": ">=20.0.0",
+    "pnpm": ">=9.0.0"
+  }
+}

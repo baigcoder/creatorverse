@@ -1,0 +1,1296 @@
+generator client {
+  provider        = "prisma-client-js"
+  previewFeatures = ["postgresqlExtensions"]
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+  extensions = [vector]
+}
+
+// ==========================================
+// AUTH & USERS
+// ==========================================
+
+enum UserRole {
+  SUPER_ADMIN
+  ADMIN
+  CREATOR
+  LEARNER
+  AFFILIATE
+}
+
+enum UserStatus {
+  ACTIVE
+  SUSPENDED
+  DELETED
+  PENDING_VERIFICATION
+}
+
+model User {
+  id              String           @id @default(cuid())
+  supabaseUserId  String?          @unique
+  name            String
+  email           String           @unique
+  emailVerified   Boolean          @default(false)
+  emailVerificationTokenHash String?
+  emailVerificationExpiresAt DateTime?
+  passwordResetTokenHash String?
+  passwordResetExpiresAt DateTime?
+  passwordResetRequestedAt DateTime?
+  passwordResetAttempts Int       @default(0)
+  phone           String?
+  avatarUrl       String?
+  passwordHash    String
+  role             UserRole         @default(LEARNER)
+  status          UserStatus       @default(PENDING_VERIFICATION)
+  createdAt       DateTime         @default(now())
+  updatedAt       DateTime         @updatedAt
+
+  creatorProfile  CreatorProfile?
+  enrollments     Enrollment[]
+  lessonProgress  LessonProgress[]
+  workshopRegs    WorkshopRegistration[]
+  subscriptions    Subscription[]
+  orders          Order[]
+  certificates    Certificate[]
+  notifications   Notification[]
+  notificationPrefs NotificationPreference[]
+  badges          UserBadge[]
+  pointsLedger    PointsLedger[]
+  streak          Streak?
+  challengeParts  ChallengeParticipation[]
+  aiConversations AIConversation[]
+  posts           Post[]
+  comments        Comment[]
+  reactions       Reaction[]
+  affiliateEarnings    AffiliateEarning[]
+  affiliateReferrals  Affiliate[]
+  mediaAssets     MediaAsset[]
+  campaignDeliveries CampaignDelivery[]
+  session         Session[]
+  auditLogs       AuditLog[]        @relation("ActorAuditLogs")
+
+  @@index([email])
+  @@index([supabaseUserId])
+  @@index([role])
+  @@map("users")
+}
+
+model Session {
+  id          String   @id @default(cuid())
+  userId      String
+  token       String?  @unique
+  tokenHash   String?  @unique
+  revokedAt   DateTime?
+  replacedByTokenHash String?
+  userAgent   String?
+  ip          String?
+  expiresAt   DateTime
+  createdAt   DateTime @default(now())
+
+  user        User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId])
+  @@index([token])
+  @@index([tokenHash])
+  @@index([expiresAt])
+  @@map("sessions")
+}
+
+// ==========================================
+// CREATOR PROFILES
+// ==========================================
+
+model CreatorProfile {
+  id              String   @id @default(cuid())
+  userId          String   @unique
+  brandName       String
+  bio             String?
+  logoUrl         String?
+  coverUrl        String?
+  customDomain    String?   @unique
+  socialLinks     Json     @default("{}")
+  payoutSettings  Json     @default("{}")
+  stripeAccountId String?
+  verifiedAt      DateTime?
+  slug            String   @unique
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+
+  user            User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  courses         Course[]
+  workshops       Workshop[]
+  communities     Community[]
+  membershipPlans MembershipPlan[]
+  products        Product[]
+  landingPages    LandingPage[]
+  mediaAssets      MediaAsset[]
+  campaigns        MarketingCampaign[]
+  coupons         Coupon[]
+  affiliates      Affiliate[]
+  orders          Order[]
+
+  @@index([userId])
+  @@index([slug])
+  @@map("creator_profiles")
+}
+
+// ==========================================
+// COURSES
+// ==========================================
+
+enum CourseStatus {
+  DRAFT
+  PUBLISHED
+  ARCHIVED
+}
+
+enum CourseLevel {
+  BEGINNER
+  INTERMEDIATE
+  ADVANCED
+}
+
+model Course {
+  id              String       @id @default(cuid())
+  creatorId       String
+  title           String
+  slug            String       @unique
+  description     String?
+  thumbnailUrl    String?
+  previewVideoUrl String?
+  price           Decimal      @default(0) @db.Decimal(10, 2)
+  currency        String       @default("USD")
+  status          CourseStatus @default(DRAFT)
+  level           CourseLevel  @default(BEGINNER)
+  language        String       @default("en")
+  totalDuration   Int          @default(0)
+  publishedAt     DateTime?
+  seoTitle        String?
+  seoDescription  String?
+  createdAt       DateTime     @default(now())
+  updatedAt       DateTime     @updatedAt
+
+  creator         CreatorProfile @relation(fields: [creatorId], references: [id], onDelete: Cascade)
+  sections        CourseSection[]
+  lessons         Lesson[]
+  enrollments     Enrollment[]
+  quizzes         Quiz[]
+  assignments     Assignment[]
+  certificates    Certificate[]
+  coupons         Coupon[]
+  analytics       CourseAnalytics[]
+  knowledgeDocs   KnowledgeDocument[]
+  aiGenerations   AIGeneration[]
+
+  @@index([creatorId])
+  @@index([status])
+  @@index([slug])
+  @@map("courses")
+}
+
+model CourseSection {
+  id          String   @id @default(cuid())
+  courseId     String
+  title        String
+  order        Int      @default(0)
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+
+  course       Course   @relation(fields: [courseId], references: [id], onDelete: Cascade)
+  lessons      Lesson[]
+
+  @@index([courseId])
+  @@map("course_sections")
+}
+
+enum LessonType {
+  VIDEO
+  TEXT
+  QUIZ
+  ASSIGNMENT
+}
+
+model Lesson {
+  id            String     @id @default(cuid())
+  sectionId     String
+  courseId      String
+  title         String
+  type          LessonType @default(VIDEO)
+  videoUrl      String?
+  content       Json?
+  order         Int        @default(0)
+  isPreview     Boolean    @default(false)
+  duration      Int        @default(0)
+  dripAfterDays Int?
+  createdAt     DateTime   @default(now())
+  updatedAt     DateTime   @updatedAt
+
+  section       CourseSection @relation(fields: [sectionId], references: [id], onDelete: Cascade)
+  course        Course        @relation(fields: [courseId], references: [id], onDelete: Cascade)
+  progress      LessonProgress[]
+  quiz          Quiz?
+  assignment    Assignment?
+
+  @@index([courseId])
+  @@index([sectionId])
+  @@map("lessons")
+}
+
+// ==========================================
+// QUIZZES & ASSIGNMENTS
+// ==========================================
+
+enum QuestionType {
+  MCQ
+  TRUE_FALSE
+  SHORT_ANSWER
+}
+
+model Quiz {
+  id            String       @id @default(cuid())
+  lessonId      String       @unique
+  courseId      String
+  title         String
+  passingScore  Int          @default(70)
+  maxAttempts   Int          @default(3)
+  createdAt     DateTime     @default(now())
+  updatedAt     DateTime     @updatedAt
+
+  lesson        Lesson       @relation(fields: [lessonId], references: [id], onDelete: Cascade)
+  course        Course       @relation(fields: [courseId], references: [id], onDelete: Cascade)
+  questions     Question[]
+  attempts      QuizAttempt[]
+
+  @@index([courseId])
+  @@map("quizzes")
+}
+
+model Question {
+  id          String       @id @default(cuid())
+  quizId      String
+  type        QuestionType @default(MCQ)
+  questionText String
+  options     Json         @default("[]")
+  correctAnswer String
+  explanation String?
+  points      Int          @default(1)
+  order       Int          @default(0)
+  createdAt   DateTime     @default(now())
+
+  quiz        Quiz         @relation(fields: [quizId], references: [id], onDelete: Cascade)
+
+  @@index([quizId])
+  @@map("questions")
+}
+
+model QuizAttempt {
+  id          String   @id @default(cuid())
+  quizId      String
+  userId      String
+  score       Int
+  maxScore    Int
+  passed      Boolean
+  answers     Json
+  attemptNo   Int
+  createdAt   DateTime @default(now())
+
+  quiz        Quiz     @relation(fields: [quizId], references: [id], onDelete: Cascade)
+
+  @@index([quizId])
+  @@index([userId])
+  @@map("quiz_attempts")
+}
+
+model Assignment {
+  id           String   @id @default(cuid())
+  lessonId     String   @unique
+  courseId     String
+  title        String
+  instructions String
+  dueDate      DateTime?
+  maxScore     Int      @default(100)
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+
+  course       Course   @relation(fields: [courseId], references: [id], onDelete: Cascade)
+  lesson       Lesson   @relation(fields: [lessonId], references: [id], onDelete: Cascade)
+  submissions  AssignmentSubmission[]
+
+  @@index([courseId])
+  @@map("assignments")
+}
+
+model AssignmentSubmission {
+  id            String   @id @default(cuid())
+  assignmentId  String
+  userId        String
+  content       String
+  fileUrl       String?
+  score         Int?
+  feedback      String?
+  aiFeedback    String?
+  submittedAt   DateTime @default(now())
+  gradedAt      DateTime?
+
+  assignment    Assignment @relation(fields: [assignmentId], references: [id], onDelete: Cascade)
+
+  @@index([assignmentId])
+  @@index([userId])
+  @@map("assignment_submissions")
+}
+
+// ==========================================
+// ENROLLMENTS & PROGRESS
+// ==========================================
+
+enum EnrollmentStatus {
+  ACTIVE
+  COMPLETED
+  EXPIRED
+}
+
+model Enrollment {
+  id          String           @id @default(cuid())
+  userId      String
+  courseId     String
+  progress    Int              @default(0)
+  status      EnrollmentStatus @default(ACTIVE)
+  enrolledAt  DateTime         @default(now())
+  completedAt DateTime?
+
+  user        User             @relation(fields: [userId], references: [id], onDelete: Cascade)
+  course      Course           @relation(fields: [courseId], references: [id], onDelete: Cascade)
+  certificate Certificate?
+  lessonProgress LessonProgress[]
+
+  @@unique([userId, courseId])
+  @@index([userId])
+  @@index([courseId])
+  @@map("enrollments")
+}
+
+model LessonProgress {
+  id                String   @id @default(cuid())
+  enrollmentId      String
+  lessonId          String
+  userId            String
+  completed         Boolean  @default(false)
+  watchTimeSeconds  Int      @default(0)
+  completedAt       DateTime?
+
+  enrollment        Enrollment @relation(fields: [enrollmentId], references: [id], onDelete: Cascade)
+  lesson            Lesson     @relation(fields: [lessonId], references: [id], onDelete: Cascade)
+  user              User       @relation(fields: [userId], references: [id])
+
+  @@unique([enrollmentId, lessonId])
+  @@index([enrollmentId])
+  @@map("lesson_progress")
+}
+
+// ==========================================
+// WORKSHOPS
+// ==========================================
+
+enum WorkshopStatus {
+  DRAFT
+  SCHEDULED
+  LIVE
+  COMPLETED
+  CANCELLED
+}
+
+enum MeetingProvider {
+  ZOOM
+  GOOGLE_MEET
+  WEBEX
+  CUSTOM
+}
+
+model Workshop {
+  id              String          @id @default(cuid())
+  creatorId       String
+  title           String
+  slug            String          @unique
+  description     String?
+  thumbnailUrl    String?
+  startTime       DateTime
+  endTime         DateTime
+  meetingProvider MeetingProvider  @default(ZOOM)
+  meetingUrl      String?
+  price           Decimal         @default(0) @db.Decimal(10, 2)
+  currency        String          @default("USD")
+  status          WorkshopStatus  @default(DRAFT)
+  maxAttendees    Int?
+  replayUrl       String?
+  createdAt       DateTime        @default(now())
+  updatedAt       DateTime        @updatedAt
+
+  creator         CreatorProfile  @relation(fields: [creatorId], references: [id], onDelete: Cascade)
+  registrations   WorkshopRegistration[]
+
+  @@index([creatorId])
+  @@index([status])
+  @@map("workshops")
+}
+
+model WorkshopRegistration {
+  id                 String   @id @default(cuid())
+  workshopId          String
+  userId              String
+  orderId             String?  @unique
+  attended            Boolean  @default(false)
+  attendanceMinutes   Int      @default(0)
+  registeredAt        DateTime @default(now())
+
+  workshop           Workshop @relation(fields: [workshopId], references: [id], onDelete: Cascade)
+  user               User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  order              Order?   @relation(fields: [orderId], references: [id])
+
+  @@unique([workshopId, userId])
+  @@index([workshopId])
+  @@map("workshop_registrations")
+}
+
+// ==========================================
+// COMMUNITY
+// ==========================================
+
+enum CommunityVisibility {
+  PUBLIC
+  PRIVATE
+  PAID
+}
+
+model Community {
+  id            String              @id @default(cuid())
+  creatorId     String
+  name          String
+  slug          String              @unique
+  description   String?
+  visibility    CommunityVisibility @default(PRIVATE)
+  iconUrl       String?
+  createdAt     DateTime            @default(now())
+  updatedAt     DateTime            @updatedAt
+
+  creator       CreatorProfile      @relation(fields: [creatorId], references: [id], onDelete: Cascade)
+  rooms          CommunityRoom[]
+
+  @@index([creatorId])
+  @@map("communities")
+}
+
+enum RoomType {
+  TEXT
+  VOICE
+  ANNOUNCEMENT
+}
+
+model CommunityRoom {
+  id           String    @id @default(cuid())
+  communityId  String
+  name         String
+  type         RoomType   @default(TEXT)
+  order        Int        @default(0)
+  createdAt    DateTime   @default(now())
+
+  community    Community  @relation(fields: [communityId], references: [id], onDelete: Cascade)
+  posts        Post[]
+
+  @@index([communityId])
+  @@map("community_rooms")
+}
+
+model Post {
+  id          String    @id @default(cuid())
+  roomId      String
+  authorId     String
+  content      String
+  mediaUrls    Json      @default("[]")
+  pinned       Boolean   @default(false)
+  createdAt    DateTime  @default(now())
+  updatedAt    DateTime  @updatedAt
+
+  room        CommunityRoom @relation(fields: [roomId], references: [id], onDelete: Cascade)
+  author      User          @relation(fields: [authorId], references: [id])
+  comments    Comment[]
+  reactions   Reaction[]
+  poll        Poll?
+
+  @@index([roomId])
+  @@index([authorId])
+  @@map("posts")
+}
+
+model Comment {
+  id              String    @id @default(cuid())
+  postId          String
+  authorId        String
+  content         String
+  parentCommentId String?
+  createdAt       DateTime  @default(now())
+
+  post            Post      @relation(fields: [postId], references: [id], onDelete: Cascade)
+  author          User      @relation(fields: [authorId], references: [id])
+
+  @@index([postId])
+  @@map("comments")
+}
+
+model Reaction {
+  id        String   @id @default(cuid())
+  postId    String
+  userId    String
+  type      String
+  createdAt DateTime @default(now())
+
+  post      Post     @relation(fields: [postId], references: [id], onDelete: Cascade)
+  user      User     @relation(fields: [userId], references: [id])
+
+  @@unique([postId, userId, type])
+  @@index([postId])
+  @@index([userId])
+  @@map("reactions")
+}
+
+model Poll {
+  id            String    @id @default(cuid())
+  postId        String    @unique
+  question      String
+  options       Json
+  expiresAt     DateTime?
+  allowMultiple Boolean   @default(false)
+  createdAt     DateTime  @default(now())
+
+  post          Post      @relation(fields: [postId], references: [id], onDelete: Cascade)
+  votes         PollVote[]
+
+  @@map("polls")
+}
+
+model PollVote {
+  id        String   @id @default(cuid())
+  pollId    String
+  userId    String
+  option    String
+  createdAt DateTime @default(now())
+
+  poll      Poll     @relation(fields: [pollId], references: [id], onDelete: Cascade)
+
+  @@unique([pollId, userId, option])
+  @@index([pollId])
+  @@map("poll_votes")
+}
+
+// ==========================================
+// MEMBERSHIPS & SUBSCRIPTIONS
+// ==========================================
+
+enum MembershipInterval {
+  MONTHLY
+  YEARLY
+}
+
+model MembershipPlan {
+  id             String             @id @default(cuid())
+  creatorId      String
+  name           String
+  description    String?
+  price          Decimal            @db.Decimal(10, 2)
+  currency       String             @default("USD")
+  interval       MembershipInterval @default(MONTHLY)
+  benefits       Json               @default("[]")
+  communityAccess Boolean           @default(false)
+  courseIds       Json              @default("[]")
+  status         CourseStatus       @default(DRAFT)
+  stripePriceId  String?
+  createdAt      DateTime           @default(now())
+  updatedAt      DateTime           @updatedAt
+
+  creator        CreatorProfile     @relation(fields: [creatorId], references: [id], onDelete: Cascade)
+  subscriptions  Subscription[]
+
+  @@index([creatorId])
+  @@map("membership_plans")
+}
+
+enum SubscriptionStatus {
+  ACTIVE
+  PAST_DUE
+  CANCELED
+  EXPIRED
+}
+
+model Subscription {
+  id                  String             @id @default(cuid())
+  userId               String
+  planId               String
+  status               SubscriptionStatus @default(ACTIVE)
+  stripeSubscriptionId  String?
+  currentPeriodStart   DateTime
+  currentPeriodEnd     DateTime
+  canceledAt           DateTime?
+  createdAt            DateTime           @default(now())
+  updatedAt            DateTime           @updatedAt
+
+  user                 User               @relation(fields: [userId], references: [id], onDelete: Cascade)
+  plan                 MembershipPlan      @relation(fields: [planId], references: [id], onDelete: Cascade)
+
+  @@index([userId])
+  @@index([planId])
+  @@map("subscriptions")
+}
+
+// ==========================================
+// PRODUCTS
+// ==========================================
+
+enum ProductType {
+  EBOOK
+  TEMPLATE
+  DOWNLOAD
+  COACHING
+  BUNDLE
+}
+
+model Product {
+  id           String      @id @default(cuid())
+  creatorId    String
+  type         ProductType @default(DOWNLOAD)
+  title        String
+  slug         String      @unique
+  description  String?
+  price        Decimal     @db.Decimal(10, 2)
+  currency     String      @default("USD")
+  fileUrl      String?
+  thumbnailUrl String?
+  status       CourseStatus @default(DRAFT)
+  createdAt    DateTime    @default(now())
+  updatedAt    DateTime    @updatedAt
+
+  creator      CreatorProfile @relation(fields: [creatorId], references: [id], onDelete: Cascade)
+
+  @@index([creatorId])
+  @@map("products")
+}
+
+// ==========================================
+// LANDING PAGES
+// ==========================================
+
+enum LandingPageStatus {
+  DRAFT
+  PUBLISHED
+  ARCHIVED
+}
+
+model LandingPage {
+  id             String            @id @default(cuid())
+  creatorId      String
+  title          String
+  slug           String            @unique
+  template       String            @default("course-launch")
+  status         LandingPageStatus @default(DRAFT)
+  sections       Json              @default("[]")
+  seoTitle       String?
+  seoDescription String?
+  publishedAt    DateTime?
+  createdAt      DateTime          @default(now())
+  updatedAt      DateTime          @updatedAt
+
+  creator        CreatorProfile    @relation(fields: [creatorId], references: [id], onDelete: Cascade)
+
+  @@index([creatorId])
+  @@index([slug])
+  @@index([status])
+  @@map("landing_pages")
+}
+
+// ==========================================
+// MEDIA ASSETS
+// ==========================================
+
+model MediaAsset {
+  id          String   @id @default(cuid())
+  uploaderId  String
+  creatorId   String?
+  key         String   @unique
+  filename    String
+  contentType String
+  size        Int
+  provider    String   @default("s3-compatible")
+  bucket      String?
+  url         String?
+  folder      String?
+  visibility  String   @default("PROTECTED")
+  status      String   @default("UPLOADED")
+  metadata    Json     @default("{}")
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  uploader    User     @relation(fields: [uploaderId], references: [id], onDelete: Cascade)
+  creator     CreatorProfile? @relation(fields: [creatorId], references: [id], onDelete: SetNull)
+
+  @@index([uploaderId])
+  @@index([creatorId])
+  @@index([key])
+  @@map("media_assets")
+}
+
+// ==========================================
+// PAYMENTS
+// ==========================================
+
+enum OrderStatus {
+  PENDING
+  COMPLETED
+  FAILED
+  REFUNDED
+}
+
+enum OrderType {
+  COURSE
+  WORKSHOP
+  MEMBERSHIP
+  PRODUCT
+}
+
+enum PaymentProvider {
+  STRIPE
+  RAZORPAY
+  PAYPAL
+}
+
+model Order {
+  id              String         @id @default(cuid())
+  userId           String
+  creatorId        String
+  orderType        OrderType
+  referenceId      String
+  amount           Decimal        @db.Decimal(10, 2)
+  currency         String         @default("USD")
+  discountAmount   Decimal        @default(0) @db.Decimal(10, 2)
+  couponId         String?
+  affiliateId       String?
+  status           OrderStatus    @default(PENDING)
+  paymentProvider  PaymentProvider?
+  providerPaymentId String?
+  metadata         Json           @default("{}")
+  createdAt        DateTime       @default(now())
+
+  user             User           @relation(fields: [userId], references: [id], onDelete: Cascade)
+  creator          CreatorProfile @relation(fields: [creatorId], references: [id])
+  coupon          Coupon?        @relation(fields: [couponId], references: [id])
+  affiliate       Affiliate?     @relation(fields: [affiliateId], references: [id])
+  payments        Payment[]
+  refunds         Refund[]
+  workshopReg      WorkshopRegistration?
+
+  @@index([userId])
+  @@index([creatorId])
+  @@index([orderType])
+  @@index([status])
+  @@map("orders")
+}
+
+enum PaymentStatus {
+  PENDING
+  COMPLETED
+  FAILED
+  REFUNDED
+}
+
+model Payment {
+  id                String         @id @default(cuid())
+  orderId           String
+  amount             Decimal        @db.Decimal(10, 2)
+  currency          String         @default("USD")
+  provider          PaymentProvider
+  providerPaymentId String?
+  method            String?
+  status             PaymentStatus @default(PENDING)
+  metadata          Json           @default("{}")
+  createdAt         DateTime       @default(now())
+
+  order             Order          @relation(fields: [orderId], references: [id])
+
+  @@index([orderId])
+  @@map("payments")
+}
+
+model Refund {
+  id              String    @id @default(cuid())
+  orderId         String
+  amount          Decimal   @db.Decimal(10, 2)
+  reason          String
+  status          String    @default("PENDING")
+  providerRefundId String?
+  createdAt       DateTime  @default(now())
+
+  order           Order     @relation(fields: [orderId], references: [id])
+
+  @@index([orderId])
+  @@map("refunds")
+}
+
+// ==========================================
+// COUPONS
+// ==========================================
+
+enum DiscountType {
+  PERCENTAGE
+  FIXED
+}
+
+model Coupon {
+  id              String       @id @default(cuid())
+  creatorId       String
+  code            String       @unique
+  discountType    DiscountType @default(PERCENTAGE)
+  discountValue   Decimal      @db.Decimal(10, 2)
+  maxRedemptions  Int?
+  usedCount       Int          @default(0)
+  expiresAt       DateTime?
+  applicableType  OrderType?
+  applicableId    String?
+  courseId        String?
+  status          CourseStatus @default(DRAFT)
+  createdAt       DateTime     @default(now())
+  updatedAt       DateTime     @updatedAt
+
+  creator         CreatorProfile @relation(fields: [creatorId], references: [id], onDelete: Cascade)
+  course          Course?       @relation(fields: [courseId], references: [id])
+  orders          Order[]
+
+  @@index([creatorId])
+  @@index([code])
+  @@index([courseId])
+  @@map("coupons")
+}
+
+// ==========================================
+// AFFILIATES
+// ==========================================
+
+model Affiliate {
+  id              String   @id @default(cuid())
+  creatorId       String
+  userId          String
+  code            String   @unique
+  commissionRate  Decimal @db.Decimal(5, 2)
+  commissionType  String  @default("PERCENTAGE")
+  status          String  @default("ACTIVE")
+  createdAt       DateTime @default(now())
+
+  creator         CreatorProfile @relation(fields: [creatorId], references: [id], onDelete: Cascade)
+  user            User           @relation(fields: [userId], references: [id])
+  earnings        AffiliateEarning[]
+  orders          Order[]
+
+  @@index([creatorId])
+  @@index([code])
+  @@map("affiliates")
+}
+
+model AffiliateEarning {
+  id           String    @id @default(cuid())
+  affiliateId  String
+  userId       String
+  orderId      String?
+  amount       Decimal @db.Decimal(10, 2)
+  status       String   @default("PENDING")
+  paidAt       DateTime?
+  createdAt    DateTime  @default(now())
+
+  affiliate    Affiliate @relation(fields: [affiliateId], references: [id], onDelete: Cascade)
+  user         User      @relation(fields: [userId], references: [id])
+
+  @@index([affiliateId])
+  @@index([userId])
+  @@map("affiliate_earnings")
+}
+
+// ==========================================
+// MARKETING
+// ==========================================
+
+model MarketingCampaign {
+  id          String   @id @default(cuid())
+  creatorId   String
+  name        String
+  subject     String
+  previewText String?
+  body        String
+  audience    String   @default("ALL")
+  status      String   @default("DRAFT")
+  sentAt      DateTime?
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  creator     CreatorProfile @relation(fields: [creatorId], references: [id], onDelete: Cascade)
+  deliveries  CampaignDelivery[]
+
+  @@index([creatorId])
+  @@index([status])
+  @@map("marketing_campaigns")
+}
+
+model CampaignDelivery {
+  id          String   @id @default(cuid())
+  campaignId  String
+  userId      String
+  email       String
+  status      String   @default("QUEUED")
+  error       String?
+  sentAt      DateTime?
+  createdAt   DateTime @default(now())
+
+  campaign    MarketingCampaign @relation(fields: [campaignId], references: [id], onDelete: Cascade)
+  user        User              @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([campaignId, userId])
+  @@index([campaignId])
+  @@index([userId])
+  @@map("campaign_deliveries")
+}
+
+// ==========================================
+// CERTIFICATES
+// ==========================================
+
+model Certificate {
+  id              String    @id @default(cuid())
+  userId          String
+  courseId        String
+  enrollmentId    String    @unique
+  certificateUrl  String?
+  templateId     String?
+  issuedAt       DateTime  @default(now())
+
+  user            User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  course          Course    @relation(fields: [courseId], references: [id], onDelete: Cascade)
+  enrollment      Enrollment @relation(fields: [enrollmentId], references: [id], onDelete: Cascade)
+  template        CertificateTemplate? @relation(fields: [templateId], references: [id])
+
+  @@unique([userId, courseId])
+  @@index([userId])
+  @@map("certificates")
+}
+
+model CertificateTemplate {
+  id          String   @id @default(cuid())
+  creatorId   String
+  name        String
+  design      Json     @default("{}")
+  createdAt   DateTime @default(now())
+
+  certificates Certificate[]
+
+  @@index([creatorId])
+  @@map("certificate_templates")
+}
+
+// ==========================================
+// GAMIFICATION
+// ==========================================
+
+enum BadgeType {
+  COURSE_COMPLETION
+  STREAK
+  COMMUNITY
+  WORKSHOP
+  CHALLENGE
+  SPECIAL
+}
+
+model Badge {
+  id          String    @id @default(cuid())
+  name        String
+  description String?
+  iconUrl     String?
+  type        BadgeType
+  criteria    Json      @default("{}")
+  createdAt   DateTime  @default(now())
+
+  userBadges  UserBadge[]
+
+  @@map("badges")
+}
+
+model UserBadge {
+  id        String   @id @default(cuid())
+  userId    String
+  badgeId   String
+  earnedAt  DateTime @default(now())
+
+  badge     Badge    @relation(fields: [badgeId], references: [id])
+  user      User     @relation(fields: [userId], references: [id])
+
+  @@unique([userId, badgeId])
+  @@index([userId])
+  @@map("user_badges")
+}
+
+model PointsLedger {
+  id             String   @id @default(cuid())
+  userId         String
+  points         Int
+  reason         String
+  referenceType  String?
+  referenceId    String?
+  createdAt      DateTime @default(now())
+
+  user           User     @relation(fields: [userId], references: [id])
+
+  @@index([userId])
+  @@map("points_ledger")
+}
+
+model Streak {
+  id             String   @id @default(cuid())
+  userId         String
+  currentStreak   Int      @default(0)
+  longestStreak   Int      @default(0)
+  lastActiveAt   DateTime @default(now())
+
+  user           User     @relation(fields: [userId], references: [id])
+
+  @@unique([userId])
+  @@map("streaks")
+}
+
+model Challenge {
+  id          String   @id @default(cuid())
+  creatorId   String?
+  title       String
+  description String?
+  type        String
+  criteria    Json     @default("{}")
+  reward      Json     @default("{}")
+  startDate   DateTime
+  endDate     DateTime?
+  createdAt   DateTime @default(now())
+
+  participants ChallengeParticipation[]
+
+  @@map("challenges")
+}
+
+model ChallengeParticipation {
+  id           String    @id @default(cuid())
+  challengeId   String
+  userId        String
+  progress      Int       @default(0)
+  completed     Boolean   @default(false)
+  completedAt  DateTime?
+
+  challenge    Challenge @relation(fields: [challengeId], references: [id], onDelete: Cascade)
+  user         User      @relation(fields: [userId], references: [id])
+
+  @@unique([challengeId, userId])
+  @@index([userId])
+  @@map("challenge_participations")
+}
+
+model Leaderboard {
+  id           String   @id @default(cuid())
+  communityId  String?
+  periodType   String   @default("weekly")
+  rankings     Json     @default("[]")
+  updatedAt    DateTime @updatedAt
+
+  @@map("leaderboards")
+}
+
+// ==========================================
+// AI
+// ==========================================
+
+enum AIConversationType {
+  TUTOR
+  COPILOT
+}
+
+model AIConversation {
+  id          String             @id @default(cuid())
+  userId      String
+  courseId    String?
+  type        AIConversationType @default(TUTOR)
+  messages    Json               @default("[]")
+  createdAt   DateTime           @default(now())
+  updatedAt   DateTime           @updatedAt
+
+  user        User               @relation(fields: [userId], references: [id])
+
+  @@index([userId])
+  @@index([courseId])
+  @@map("ai_conversations")
+}
+
+model KnowledgeDocument {
+  id             String   @id @default(cuid())
+  courseId       String
+  sourceType     String
+  sourceId       String?
+  content        String
+  chunkIndex     Int      @default(0)
+  embedding      Unsupported("vector(1536)")?
+  embeddingStatus String  @default("PENDING")
+  createdAt      DateTime @default(now())
+
+  course         Course   @relation(fields: [courseId], references: [id], onDelete: Cascade)
+
+  @@index([courseId])
+  @@map("knowledge_documents")
+}
+
+model AIGeneration {
+  id          String   @id @default(cuid())
+  userId      String
+  courseId    String?
+  type        String
+  input       Json
+  output      Json
+  model       String?
+  tokens      Int?
+  createdAt   DateTime @default(now())
+
+  course      Course?  @relation(fields: [courseId], references: [id])
+
+  @@index([userId])
+  @@index([courseId])
+  @@map("ai_generations")
+}
+
+// ==========================================
+// ANALYTICS
+// ==========================================
+
+model AnalyticsEvent {
+  id          String   @id @default(cuid())
+  userId      String?
+  creatorId   String?
+  eventType   String
+  metadata   Json     @default("{}")
+  createdAt  DateTime @default(now())
+
+  @@index([userId])
+  @@index([creatorId])
+  @@index([eventType])
+  @@index([createdAt])
+  @@map("analytics_events")
+}
+
+model CourseAnalytics {
+  id           String   @id @default(cuid())
+  courseId     String
+  date         DateTime @db.Date
+  views        Int      @default(0)
+  enrollments Int      @default(0)
+  completions  Int      @default(0)
+  revenue     Decimal  @default(0) @db.Decimal(10, 2)
+  createdAt   DateTime @default(now())
+
+  course       Course   @relation(fields: [courseId], references: [id], onDelete: Cascade)
+
+  @@unique([courseId, date])
+  @@index([courseId])
+  @@map("course_analytics")
+}
+
+model DailyCreatorAnalytics {
+  id              String   @id @default(cuid())
+  creatorId       String
+  date            DateTime @db.Date
+  revenue         Decimal  @default(0) @db.Decimal(10, 2)
+  enrollments     Int      @default(0)
+  activeLearners  Int      @default(0)
+  communityPosts  Int      @default(0)
+  createdAt       DateTime @default(now())
+
+  @@unique([creatorId, date])
+  @@index([creatorId])
+  @@map("daily_creator_analytics")
+}
+
+// ==========================================
+// NOTIFICATIONS
+// ==========================================
+
+enum NotificationType {
+  ENROLLMENT
+  PAYMENT
+  CERTIFICATE
+  WORKSHOP_REMINDER
+  COMMUNITY_MENTION
+  STREAK
+  ACHIEVEMENT
+  ANNOUNCEMENT
+}
+
+model Notification {
+  id        String           @id @default(cuid())
+  userId    String
+  type      NotificationType
+  title     String
+  body      String
+  data      Json             @default("{}")
+  readAt    DateTime?
+  createdAt DateTime         @default(now())
+
+  user      User             @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId])
+  @@index([readAt])
+  @@map("notifications")
+}
+
+model NotificationPreference {
+  id       String   @id @default(cuid())
+  userId   String
+  channel  String
+  type     String
+  enabled  Boolean  @default(true)
+
+  user     User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, channel, type])
+  @@map("notification_preferences")
+}
+
+// ==========================================
+// AUDIT LOGS
+// ==========================================
+
+model AuditLog {
+  id          String   @id @default(cuid())
+  actorId     String?
+  action      String
+  entityType  String
+  entityId    String?
+  metadata    Json     @default("{}")
+  ip          String?
+  userAgent   String?
+  createdAt   DateTime @default(now())
+
+  actor       User?    @relation("ActorAuditLogs", fields: [actorId], references: [id])
+
+  @@index([actorId])
+  @@index([entityType])
+  @@index([createdAt])
+  @@map("audit_logs")
+}
+
+model PlatformSetting {
+  id        String   @id @default(cuid())
+  key       String   @unique
+  value     Json     @default("{}")
+  updatedBy String?
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([key])
+  @@map("platform_settings")
+}

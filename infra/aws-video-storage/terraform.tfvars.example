@@ -1,0 +1,14 @@
+aws_region = "us-east-1"
+bucket_name = "your-existing-skillmango-video-bucket"
+
+allowed_cors_origins = [
+  "http://localhost:3000",
+  "https://your-web-domain.com"
+]
+
+iam_user_name = "skillmango-video-storage"
+
+tags = {
+  Environment = "production"
+  Owner       = "skillmango"
+}
