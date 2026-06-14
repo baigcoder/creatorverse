@@ -129,14 +129,14 @@ export default function RegisterPage() {
       <div className="absolute bottom-[-10%] left-[-10%] h-[500px] w-[500px] rounded-full bg-[#FF00B8]/10 blur-[130px] pointer-events-none" />
 
       {/* ── Left: Visual (Zine Grid / Mixtape Benefits Panel) ──────────────────────────────── */}
-      <div className="relative hidden flex-col justify-center border-r-4 border-black bg-gradient-to-br from-[#0C0717] via-[#0A0510] to-[#17052C] px-12 xl:px-16 lg:flex lg:w-1/2 lg:h-full lg:overflow-hidden">
+      <div className="relative hidden flex-col border-r-4 border-black bg-gradient-to-br from-[#0C0717] via-[#0A0510] to-[#17052C] px-12 xl:px-16 lg:flex lg:w-1/2 lg:h-full lg:overflow-y-auto lg:py-12">
         <div className="absolute inset-0 bg-[linear-gradient(rgba(255,0,184,0.05)_2px,transparent_2px),linear-gradient(90deg,rgba(255,0,184,0.05)_2px,transparent_2px)] bg-[size:30px_30px] pointer-events-none opacity-40" />
 
         <motion.div
           initial={{ opacity: 0, x: -30 }}
           animate={{ opacity: 1, x: 0 }}
           transition={{ duration: 0.5 }}
-          className="relative z-10 space-y-8"
+          className="relative z-10 my-auto space-y-8"
         >
           <div className="inline-block rounded-lg border-2 border-black bg-[#140C20] px-4 py-2 text-left font-mono text-[11px] font-semibold uppercase tracking-[0.16em] text-[#A6FF00] shadow-[3px_3px_0px_#000]">
             CO-PROCESSOR PROTOCOL // LOADED // STATUS: WAITING_PLAYER_2
@@ -179,12 +179,12 @@ export default function RegisterPage() {
       </div>
 
       {/* ── Right: Form (Character Creation Dashboard) ────────────────────────────────── */}
-      <div className="relative z-10 flex w-full flex-col justify-center px-4 py-6 sm:px-8 lg:w-1/2 lg:h-full lg:overflow-y-auto lg:py-10 lg:px-16 xl:px-24">
+      <div className="relative z-10 flex w-full flex-col px-4 py-8 sm:px-8 lg:w-1/2 lg:h-full lg:overflow-y-auto lg:px-16 lg:py-12 xl:px-24">
         <motion.div
           initial={{ opacity: 0, scale: 0.95 }}
           animate={{ opacity: 1, scale: 1 }}
           transition={{ duration: 0.4 }}
-          className="mx-auto w-full max-w-[520px]"
+          className="mx-auto my-auto w-full max-w-[520px]"
         >
           {/* Header Console Tag */}
           <div className="mb-5 flex items-center justify-between rounded-lg border-2 border-black bg-black/40 p-2.5 backdrop-blur-md shadow-[3px_3px_0px_#000]">

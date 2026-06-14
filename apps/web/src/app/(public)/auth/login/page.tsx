@@ -132,7 +132,7 @@ export default function LoginPage() {
   };
 
   return (
-    <div className="relative flex min-h-[100dvh] flex-col overflow-hidden bg-[#0A0510] font-sans text-white lg:h-[100dvh] lg:flex-row">
+    <div className="relative flex min-h-screen w-screen flex-col lg:flex-row overflow-y-auto lg:overflow-hidden bg-[#0A0510] font-sans text-white">
       {/* ── CRT Overlay & Scanlines ──────────────────── */}
       <div className="absolute inset-0 bg-[linear-gradient(rgba(18,10,36,0)_50%,rgba(0,0,0,0.25)_50%),linear-gradient(90deg,rgba(255,0,184,0.06),rgba(0,228,255,0.02),rgba(166,255,0,0.06))] bg-[size:100%_4px,3px_100%] pointer-events-none opacity-55 z-40" />
       <div className="absolute inset-0 bg-[linear-gradient(rgba(255,0,184,0.04)_1px,transparent_1px),linear-gradient(90deg,rgba(255,0,184,0.04)_1px,transparent_1px)] bg-[size:40px_40px] pointer-events-none" />
@@ -142,12 +142,12 @@ export default function LoginPage() {
       <div className="absolute bottom-[-10%] right-[-10%] h-[500px] w-[500px] rounded-full bg-[#00E4FF]/10 blur-[130px] pointer-events-none" />
 
       {/* ── Left: Form (Arcade Cabinet Interface) ─────────────────────────────────── */}
-      <div className="relative z-10 my-auto flex w-full flex-col justify-center px-4 py-6 sm:px-8 lg:h-full lg:w-1/2 lg:px-16 lg:py-4 xl:px-24">
+      <div className="relative z-10 flex w-full flex-col px-4 py-8 sm:px-8 lg:h-full lg:w-1/2 lg:overflow-y-auto lg:px-16 lg:py-12 xl:px-24">
         <motion.div
           initial={{ opacity: 0, scale: 0.95 }}
           animate={{ opacity: 1, scale: 1 }}
           transition={{ duration: 0.4 }}
-          className="mx-auto w-full max-w-[480px] lg:max-w-[470px]"
+          className="mx-auto my-auto w-full max-w-[480px] lg:max-w-[470px]"
         >
           {/* Header Console Tag */}
           <div className="mb-4 flex items-center justify-between rounded-lg border-2 border-black bg-black/40 p-2.5 backdrop-blur-md shadow-[3px_3px_0px_#000]">
@@ -340,11 +340,11 @@ export default function LoginPage() {
       </div>
 
       {/* ── Right: Visual (Hyper-interactive Synthwave Cassette Arcade Deck) ──────── */}
-      <div className="relative hidden h-full flex-col items-center justify-center overflow-hidden border-l-4 border-black bg-gradient-to-br from-[#100824] via-[#0A0510] to-[#240835] lg:flex lg:w-1/2">
+      <div className="relative hidden flex-col items-center border-l-4 border-black bg-gradient-to-br from-[#100824] via-[#0A0510] to-[#240835] lg:flex lg:w-1/2 lg:h-full lg:overflow-y-auto lg:py-12">
         {/* Animated Cybergrid Overlay */}
         <div className="absolute inset-0 bg-[linear-gradient(rgba(0,228,255,0.05)_2px,transparent_2px),linear-gradient(90deg,rgba(0,228,255,0.05)_2px,transparent_2px)] bg-[size:30px_30px] pointer-events-none opacity-40" />
 
-        <div className="relative z-10 flex w-full max-w-xl flex-col items-center justify-center p-10 text-center xl:p-12">
+        <div className="relative z-10 my-auto flex w-full max-w-xl flex-col items-center justify-center p-10 text-center xl:p-12">
           <motion.div
             initial={{ opacity: 0, y: 30 }}
             animate={{ opacity: 1, y: 0 }}
