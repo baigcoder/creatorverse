@@ -2,7 +2,6 @@
   "$schema": "https://openapi.vercel.sh/vercel.json",
   "framework": "nextjs",
   "buildCommand": "pnpm --filter @skillmango/web build",
-  "outputDirectory": "apps/web/.next",
   "installCommand": "corepack enable && pnpm install",
   "ignoreCommand": "npx turbo-ignore @skillmango/web",
   "headers": [
