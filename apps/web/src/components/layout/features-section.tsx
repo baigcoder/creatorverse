@@ -158,34 +158,31 @@ const features: FeatureItem[] = [
 
 const accentColors: Record<string, { border: string; glow: string; text: string; bg: string; badge: string }> = {
   violet: {
-    border: 'border-violet shadow-neon-magenta hover:border-violet-300',
-    glow: 'rgba(255, 0, 184, 0.35)',
-    text: 'text-violet',
-    bg: 'bg-violet/10',
-    badge: 'border-violet/50 bg-violet/15 text-violet-200',
+    border: 'border-violet/20 hover:border-violet/40',
+    glow: 'rgba(255, 0, 184, 0.1)',
+    text: 'text-violet-300',
+    bg: 'bg-violet/5',
+    badge: 'border-violet/20 bg-violet/10 text-violet-300',
   },
   cyan: {
-    border: 'border-cyan shadow-neon-cyan hover:border-cyan-300',
-    glow: 'rgba(0, 228, 255, 0.35)',
-    text: 'text-cyan',
-    bg: 'bg-cyan/10',
-    badge: 'border-cyan/50 bg-cyan/15 text-cyan-100',
+    border: 'border-cyan/20 hover:border-cyan/40',
+    glow: 'rgba(0, 228, 255, 0.1)',
+    text: 'text-cyan-300',
+    bg: 'bg-cyan/5',
+    badge: 'border-cyan/20 bg-cyan/10 text-cyan-300',
   },
   mango: {
-    border: 'border-mango shadow-neon-green hover:border-mango-300',
-    glow: 'rgba(166, 255, 0, 0.35)',
+    border: 'border-mango/20 hover:border-mango/45',
+    glow: 'rgba(166, 255, 0, 0.1)',
     text: 'text-mango-300',
-    bg: 'bg-mango/10',
-    badge: 'border-mango/70 bg-mango text-midnight',
+    bg: 'bg-mango/5',
+    badge: 'border-mango/20 bg-mango/10 text-mango-300',
   },
 };
 
 function FeatureCard({ feature, index }: { feature: FeatureItem; index: number }) {
   const [isFlipped, setIsFlipped] = useState(false);
   const color = accentColors[feature.accent];
-
-  // Rotate rotation values based on index to create "zine design chaos"
-  const rotation = index % 3 === 0 ? 'hover:rotate-[1deg]' : index % 3 === 1 ? 'hover:rotate-[-1.5deg]' : 'hover:rotate-[0.5deg]';
 
   return (
     <div
@@ -199,11 +196,11 @@ function FeatureCard({ feature, index }: { feature: FeatureItem; index: number }
       >
         {/* CARD FRONT */}
         <div
-          className={`absolute inset-0 flex flex-col justify-between backface-hidden rounded-2xl border-3 border-border bg-card p-6 shadow-[-4px_4px_0px_0px_rgba(28,28,28,1)] transition-all duration-300 group-hover:-translate-y-1.5 group-hover:translate-x-1 group-hover:shadow-[-8px_8px_0px_0px_rgba(28,28,28,1)] dark:bg-midnight-raised ${rotation} ${color.border}`}
+          className={`absolute inset-0 flex flex-col justify-between backface-hidden rounded-2xl border border-white/10 bg-[#140C20]/40 p-6 shadow-xl backdrop-blur-xl transition-all duration-300 group-hover:-translate-y-1 ${color.border}`}
         >
           {/* Top Info Bar */}
           <div className="flex items-center justify-between">
-            <span className="font-mono text-[11px] font-semibold uppercase tracking-[0.18em] text-muted-foreground">
+            <span className="font-mono text-[10px] font-semibold uppercase tracking-[0.18em] text-muted-foreground">
               {feature.moduleCode}
             </span>
             <span className={`inline-flex items-center gap-1 rounded-full border px-2.5 py-1 text-[10px] font-bold uppercase tracking-[0.16em] ${color.badge}`}>
@@ -213,37 +210,34 @@ function FeatureCard({ feature, index }: { feature: FeatureItem; index: number }
 
           {/* Main Info */}
           <div>
-            <div className={`inline-flex h-12 w-12 items-center justify-center rounded-xl border-2 border-border shadow-[-2px_2px_0px_rgba(28,28,28,1)] ${color.bg} ${feature.accent === 'violet' ? 'border-violet' : feature.accent === 'cyan' ? 'border-cyan' : 'border-mango'}`}>
+            <div className={`inline-flex h-12 w-12 items-center justify-center rounded-xl border border-white/10 ${color.bg} ${feature.accent === 'violet' ? 'border-violet/30' : feature.accent === 'cyan' ? 'border-cyan/30' : 'border-mango/30'}`}>
               <feature.icon className={`h-6 w-6 ${color.text}`} />
             </div>
-            <h3 className="mt-4 font-display text-xl font-extrabold tracking-tight text-foreground sm:text-2xl">
+            <h3 className="mt-4 font-display text-xl font-extrabold tracking-tight text-white sm:text-2xl">
               {feature.title}
             </h3>
-            <p className="mt-2 line-clamp-3 text-sm font-medium leading-relaxed text-muted-foreground">
+            <p className="mt-2 line-clamp-3 text-sm font-medium leading-relaxed text-slate-400">
               {feature.description}
             </p>
           </div>
 
           {/* Bottom Action Hint */}
-          <div className="flex items-center justify-between border-t border-border/20 pt-3">
-            <span className="font-mono text-[10px] font-semibold uppercase tracking-[0.16em] text-foreground/85">
+          <div className="flex items-center justify-between border-t border-white/5 pt-3">
+            <span className="font-mono text-[10px] font-semibold uppercase tracking-[0.16em] text-slate-400">
               Click to boot console
             </span>
-            <div className={`flex h-6 w-6 items-center justify-center rounded-full border border-border shadow-[-1px_1px_0px_rgba(28,28,28,1)] ${color.bg}`}>
-              <Play className={`h-2.5 w-2.5 fill-current ${color.text} translate-x-[0.5px]`} />
+            <div className={`flex h-6 w-6 items-center justify-center rounded-full border border-white/10 bg-white/5`}>
+              <Play className={`h-2.5 w-2.5 fill-current text-white translate-x-[0.5px]`} />
             </div>
           </div>
         </div>
 
-        {/* CARD BACK (CRT / CONSOLE VIEW) */}
+        {/* CARD BACK (CONSOLE VIEW) */}
         <div
-          className={`absolute inset-0 flex flex-col justify-between backface-hidden rotate-y-180 rounded-2xl border-3 border-border bg-midnight-soft p-5 text-foreground shadow-[-4px_4px_0px_0px_rgba(28,28,28,1)] overflow-hidden shadow-crt ${color.border}`}
+          className={`absolute inset-0 flex flex-col justify-between backface-hidden rotate-y-180 rounded-2xl border border-white/10 bg-[#1D152C]/65 p-5 text-foreground shadow-xl backdrop-blur-xl overflow-hidden ${color.border}`}
         >
-          {/* CRT scanline effects */}
-          <div className="pointer-events-none absolute inset-0 z-10 bg-[linear-gradient(rgba(18,16,16,0)_50%,rgba(0,0,0,0.25)_50%),linear-gradient(90deg,rgba(255,0,0,0.06),rgba(0,255,0,0.02),rgba(0,0,255,0.06))] bg-[size:100%_4px,3px_100%]" />
-
           {/* Top Console Status Bar */}
-          <div className="z-20 flex items-center justify-between border-b border-border/40 pb-2">
+          <div className="z-20 flex items-center justify-between border-b border-white/5 pb-2">
             <div className="flex items-center gap-2">
               <Terminal className="h-4 w-4 text-mango" />
               <span className="font-mono text-[10px] uppercase tracking-wider text-muted-foreground">
@@ -262,36 +256,36 @@ function FeatureCard({ feature, index }: { feature: FeatureItem; index: number }
           </div>
 
           {/* Console Output Code */}
-          <div className="z-20 my-2 flex-grow rounded border border-border/40 bg-midnight p-2 font-mono text-[10px] text-zinc-300">
+          <div className="z-20 my-2 flex-grow rounded border border-white/5 bg-midnight p-2.5 font-mono text-[10px] text-zinc-300">
             <p className="text-zinc-500 font-semibold">// INITIALIZE BOOT SEQUENCE</p>
             <p className="mt-1 text-cyan">{feature.backConsole.terminalText}</p>
-            <p className="mt-2 text-violet">&gt; LOADING MODULE CONTENT... OK</p>
+            <p className="mt-2 text-violet-300">&gt; LOADING MODULE CONTENT... OK</p>
             <p className="text-mango">&gt; METRIC RESOLVED: SUCCESS</p>
           </div>
 
           {/* Interactive Metric Box */}
-          <div className="z-20 rounded-lg border-2 border-border bg-midnight/60 p-2.5 shadow-[-2px_2px_0px_rgba(28,28,28,1)]">
+          <div className="z-20 rounded-lg border border-white/5 bg-midnight/60 p-2.5">
             <div className="flex justify-between font-mono text-[10px] font-semibold uppercase tracking-[0.14em] text-muted-foreground">
               <span>{feature.backConsole.metricLabel}</span>
               <span className={color.text}>{feature.backConsole.metricValue}</span>
             </div>
-            {/* Retro HP Bar / Health Progress */}
-            <div className="mt-1.5 h-3.5 w-full rounded border border-border bg-midnight p-0.5 overflow-hidden">
+            {/* Clean Progress Bar */}
+            <div className="mt-1.5 h-2.5 w-full rounded-full border border-white/5 bg-midnight p-0.5 overflow-hidden">
               <div
-                className={`h-full rounded-sm ${feature.accent === 'violet' ? 'bg-violet' : feature.accent === 'cyan' ? 'bg-cyan' : 'bg-mango'} shadow-lg`}
+                className={`h-full rounded-full ${feature.accent === 'violet' ? 'bg-violet' : feature.accent === 'cyan' ? 'bg-cyan' : 'bg-mango'} shadow-lg`}
                 style={{ width: `${feature.backConsole.health}%` }}
               />
             </div>
-            <div className="mt-1 flex justify-between font-mono text-[9px] font-medium uppercase tracking-[0.14em] text-muted-foreground">
+            <div className="mt-1 flex justify-between font-mono text-[8px] font-medium uppercase tracking-[0.14em] text-slate-500">
               <span>0% LOAD</span>
               <span>100% READY</span>
             </div>
           </div>
 
           {/* Bottom Flip Action */}
-          <div className="z-20 flex items-center justify-between border-t border-border/40 pt-2 font-mono text-[10px] font-semibold uppercase tracking-[0.14em] text-muted-foreground">
+          <div className="z-20 flex items-center justify-between border-t border-white/5 pt-2 font-mono text-[10px] font-semibold uppercase tracking-[0.14em] text-slate-400">
             <span>Press to exit terminal</span>
-            <span className="flex items-center gap-1 text-foreground">
+            <span className="flex items-center gap-1 text-white">
               <RotateCcw className="h-3 w-3 text-mango animate-spin" /> BACK
             </span>
           </div>
@@ -303,49 +297,49 @@ function FeatureCard({ feature, index }: { feature: FeatureItem; index: number }
 
 export function FeaturesSection() {
   return (
-    <section id="features" className="relative overflow-hidden border-b-4 border-border bg-snow py-20 scroll-mt-24 dark:bg-midnight sm:py-24">
-      {/* Background Dots & Retro Grid */}
-      <div className="absolute inset-0 bg-[radial-gradient(#1c1c1c_1px,transparent_1px)] bg-[size:24px_24px] opacity-[0.04] dark:bg-[radial-gradient(#ffffff_1px,transparent_1px)] dark:opacity-[0.03]" />
+    <section id="features" className="relative overflow-hidden border-b border-white/5 bg-midnight py-20 scroll-mt-24 sm:py-24">
+      {/* Background Grid */}
+      <div className="absolute inset-0 bg-[linear-gradient(rgba(255,255,255,0.015)_1px,transparent_1px),linear-gradient(90deg,rgba(255,255,255,0.015)_1px,transparent_1px)] bg-[size:30px_30px]" />
 
       <div className="relative z-10 mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
         {/* Header */}
         <div className="grid gap-8 lg:grid-cols-[minmax(0,1.15fr)_minmax(280px,0.85fr)] lg:items-end">
           <div className="max-w-3xl">
-            <span className="inline-block rounded-md border-2 border-border bg-mango px-3 py-1.5 text-[11px] font-black uppercase tracking-[0.18em] text-midnight shadow-[-2px_2px_0px_rgba(28,28,28,1)]">
+            <span className="inline-block rounded-full border border-mango/20 bg-mango/10 px-3.5 py-1.5 text-[10px] font-bold uppercase tracking-[0.18em] text-mango-300">
               SYSTEM CAPABILITIES
             </span>
-            <h2 className="mt-6 font-display text-4xl font-black leading-none tracking-tight text-foreground sm:text-6xl uppercase">
+            <h2 className="mt-6 font-display text-4xl font-black leading-none tracking-tight text-white sm:text-6xl uppercase">
               One Console.{' '}
               <span className="gradient-hero bg-clip-text text-transparent font-extrabold shadow-sm">
                 Infinite Chaos.
               </span>
             </h2>
-            <p className="mt-5 max-w-2xl text-lg font-medium leading-relaxed text-muted-foreground">
+            <p className="mt-5 max-w-2xl text-lg font-medium leading-relaxed text-slate-300">
               Boot up the creator operating system. No corporate bloat, no boring spreadsheets, just one streamlined command center for publishing, teaching, selling, and retention.
             </p>
           </div>
 
-          <div className="rounded-3xl border border-border/40 bg-card/70 p-6 shadow-[-4px_4px_0px_0px_rgba(28,28,28,1)] backdrop-blur dark:bg-white/[0.03]">
-            <p className="text-[11px] font-bold uppercase tracking-[0.18em] text-muted-foreground">Quick Readout</p>
+          <div className="rounded-3xl border border-white/10 bg-white/[0.02] p-6 shadow-2xl backdrop-blur-xl">
+            <p className="text-[11px] font-bold uppercase tracking-[0.18em] text-slate-400">Quick Readout</p>
             <div className="mt-4 space-y-4">
-              <div className="flex items-start justify-between gap-4 border-b border-border/15 pb-4">
+              <div className="flex items-start justify-between gap-4 border-b border-white/5 pb-4">
                 <div>
-                  <p className="text-sm font-semibold text-foreground">Built for the full creator stack</p>
-                  <p className="mt-1 text-sm text-muted-foreground">Courses, live sessions, communities, storefronts, and AI support in one surface.</p>
+                  <p className="text-sm font-semibold text-white">Built for the full creator stack</p>
+                  <p className="mt-1 text-sm text-slate-400">Courses, live sessions, communities, storefronts, and AI support in one surface.</p>
                 </div>
                 <span className="font-display text-2xl font-bold text-violet">08</span>
               </div>
-              <div className="flex items-start justify-between gap-4 border-b border-border/15 pb-4">
+              <div className="flex items-start justify-between gap-4 border-b border-white/5 pb-4">
                 <div>
-                  <p className="text-sm font-semibold text-foreground">Interactive by design</p>
-                  <p className="mt-1 text-sm text-muted-foreground">Flip any module to preview the console state and outcomes behind the feature.</p>
+                  <p className="text-sm font-semibold text-white">Interactive by design</p>
+                  <p className="mt-1 text-sm text-slate-400">Flip any module to preview the console state and outcomes behind the feature.</p>
                 </div>
                 <span className="font-display text-2xl font-bold text-cyan">Live</span>
               </div>
               <div className="flex items-start justify-between gap-4">
                 <div>
-                  <p className="text-sm font-semibold text-foreground">Cleaner hierarchy</p>
-                  <p className="mt-1 text-sm text-muted-foreground">Focused cards, tighter spacing, and stronger contrast make scanning easier.</p>
+                  <p className="text-sm font-semibold text-white">Cleaner hierarchy</p>
+                  <p className="mt-1 text-sm text-slate-400">Focused cards, tighter spacing, and stronger contrast make scanning easier.</p>
                 </div>
                 <span className="font-display text-2xl font-bold text-mango-300">Fast</span>
               </div>

@@ -79,21 +79,21 @@ export function TestimonialsSection() {
   };
 
   return (
-    <section className="relative overflow-hidden border-b-4 border-border bg-snow py-20 dark:bg-midnight sm:py-28">
-      {/* Background glitch grids */}
-      <div className="absolute inset-0 bg-[linear-gradient(rgba(28,28,28,0.05)_1px,transparent_1px),linear-gradient(90deg,rgba(28,28,28,0.05)_1px,transparent_1px)] bg-[size:20px_20px] dark:bg-[linear-gradient(rgba(255,255,255,0.03)_1px,transparent_1px),linear-gradient(90deg,rgba(255,255,255,0.03)_1px,transparent_1px)]" />
+    <section className="relative overflow-hidden border-b border-white/5 bg-midnight py-20 sm:py-28">
+      {/* Background Grid */}
+      <div className="absolute inset-0 bg-[linear-gradient(rgba(255,255,255,0.015)_1px,transparent_1px),linear-gradient(90deg,rgba(255,255,255,0.015)_1px,transparent_1px)] bg-[size:30px_30px]" />
 
       <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 relative z-10">
         <div className="flex flex-col items-center justify-between gap-6 md:flex-row md:items-end">
           <div className="max-w-2xl text-center md:text-left">
-            <span className="inline-block rounded-md border-2 border-border bg-cyan px-3 py-1 font-retro text-sm font-bold text-border shadow-[-2px_2px_0px_rgba(28,28,28,1)]">
+            <span className="inline-block rounded-full border border-cyan/20 bg-cyan/10 px-3.5 py-1.5 text-[10px] font-bold uppercase tracking-[0.18em] text-cyan-300">
               CREATOR REVIEWS
             </span>
-            <h2 className="mt-6 font-display text-4xl font-black uppercase tracking-tight text-foreground sm:text-6xl leading-none">
-              LOVED BY <span className="text-gradient-hero">10,000+</span> SPEEDRUNNERS
+            <h2 className="mt-6 font-display text-4xl font-black uppercase tracking-tight text-white sm:text-6xl leading-none">
+              LOVED BY <span className="text-gradient-hero">10,000+</span> LEADING CREATORS
             </h2>
-            <p className="mt-4 text-lg font-medium text-muted-foreground">
-              See how modern creators deleted their heavy corporate tools and booted up a beautiful custom Y2K business machine.
+            <p className="mt-4 text-lg font-medium text-slate-300">
+              See how modern creators consolidated their workflows and scaled their revenue with a clean, high-performance creator engine.
             </p>
           </div>
 
@@ -101,51 +101,44 @@ export function TestimonialsSection() {
           <div className="flex items-center gap-4">
             <button
               onClick={handlePrev}
-              className="flex h-12 w-12 items-center justify-center rounded-lg border-3 border-border bg-white text-foreground shadow-[-3px_3px_0px_rgba(28,28,28,1)] transition-all hover:bg-zinc-100 active:translate-y-[3px] active:-translate-x-[3px] active:shadow-none dark:bg-midnight dark:hover:bg-midnight-soft"
+              className="flex h-11 w-11 items-center justify-center rounded-xl border border-white/10 bg-[#140C20]/45 text-white shadow-lg backdrop-blur-xl transition-all duration-200 hover:bg-white/5 active:scale-95 cursor-pointer"
             >
-              <ChevronLeft className="h-6 w-6 stroke-[3px]" />
+              <ChevronLeft className="h-5 w-5" />
             </button>
             <button
               onClick={handleNext}
-              className="flex h-12 w-12 items-center justify-center rounded-lg border-3 border-border bg-white text-foreground shadow-[-3px_3px_0px_rgba(28,28,28,1)] transition-all hover:bg-zinc-100 active:translate-y-[3px] active:-translate-x-[3px] active:shadow-none dark:bg-midnight dark:hover:bg-midnight-soft"
+              className="flex h-11 w-11 items-center justify-center rounded-xl border border-white/10 bg-[#140C20]/45 text-white shadow-lg backdrop-blur-xl transition-all duration-200 hover:bg-white/5 active:scale-95 cursor-pointer"
             >
-              <ChevronRight className="h-6 w-6 stroke-[3px]" />
+              <ChevronRight className="h-5 w-5" />
             </button>
           </div>
         </div>
 
         {/* Carousel Area */}
-        <div className="mt-16 relative flex items-center justify-center min-h-[440px]">
+        <div className="mt-16 relative flex items-center justify-center min-h-[380px]">
           <div className="w-full max-w-xl md:max-w-2xl px-4 relative">
             <AnimatePresence mode="wait">
               {testimonials.map((t, idx) => {
                 if (idx !== activeIdx) return null;
                 const c = colors[t.accent];
-                const b = borderStyles[t.accent];
 
                 return (
                   <motion.div
                     key={t.name}
-                    initial={{ opacity: 0, rotate: -3, scale: 0.95, y: 10 }}
-                    animate={{ opacity: 1, rotate: idx % 2 === 0 ? 1 : -1, scale: 1, y: 0 }}
-                    exit={{ opacity: 0, rotate: 3, scale: 0.95, y: -10 }}
+                    initial={{ opacity: 0, scale: 0.95, y: 10 }}
+                    animate={{ opacity: 1, scale: 1, y: 0 }}
+                    exit={{ opacity: 0, scale: 0.95, y: -10 }}
                     transition={{ type: 'spring', stiffness: 300, damping: 25 }}
-                    className="relative mx-auto rounded-xl border-3 border-border bg-card p-6 md:p-8 shadow-[-8px_8px_0px_rgba(28,28,28,1)] dark:bg-midnight-raised"
+                    className="relative mx-auto rounded-2xl border border-white/10 bg-[#140C20]/45 p-6 md:p-8 shadow-2xl backdrop-blur-xl"
                   >
-                    {/* Retro sticky tape overlay */}
-                    <div className={`absolute -top-4 left-1/3 -translate-x-1/2 px-6 py-1 border-2 border-border font-retro text-xs font-black text-border shadow-sm uppercase ${t.tapeStyle}`}>
-                      CV STICKER
-                    </div>
-
                     <div className="flex flex-col gap-6 md:flex-row md:items-start">
-                      {/* Polaroid Image Frame */}
-                      <div className={`relative flex-shrink-0 self-center md:self-start rounded-lg border-3 border-border bg-white p-3 shadow-[-4px_4px_0px_rgba(28,28,28,1)] ${b}`}>
-                        <div className={`flex h-32 w-32 items-center justify-center rounded border-2 border-border font-display text-4xl font-black ${c}`}>
+                      {/* Modern Avatar Frame */}
+                      <div className="relative flex-shrink-0 self-center md:self-start">
+                        <div className={`flex h-24 w-24 items-center justify-center rounded-2xl border border-white/10 font-display text-3xl font-black shadow-lg ${c}`}>
                           {t.initials}
                         </div>
-                        {/* Polaroid signature caption */}
-                        <div className="mt-3 text-center font-retro text-xs font-black tracking-wider text-border">
-                          {t.name.split(' ')[0]} // VERIFIED
+                        <div className="mt-2 text-center font-mono text-[9px] font-bold tracking-widest text-[#A6FF00] uppercase">
+                          // VERIFIED
                         </div>
                       </div>
 
@@ -153,30 +146,30 @@ export function TestimonialsSection() {
                       <div className="flex-grow flex flex-col justify-between min-h-[160px]">
                         <div>
                           {/* Rating and Badges */}
-                          <div className="flex flex-wrap items-center justify-between gap-2 border-b border-border/20 pb-3 mb-4">
-                            <span className="inline-block rounded border border-border bg-mango px-2 py-0.5 font-retro text-[10px] font-black text-border">
+                          <div className="flex flex-wrap items-center justify-between gap-2 border-b border-white/5 pb-3 mb-4">
+                            <span className="inline-block rounded-full border border-white/10 bg-white/5 px-2.5 py-0.5 font-mono text-[9px] font-semibold text-slate-300">
                               {t.hypeTag}
                             </span>
                             <div className="flex gap-0.5">
                               {Array.from({ length: t.rating }).map((_, i) => (
-                                <Star key={i} className="h-4.5 w-4.5 fill-mango text-border stroke-[1.5px]" />
+                                <Star key={i} className="h-4 w-4 fill-mango text-mango stroke-none" />
                               ))}
                             </div>
                           </div>
 
                           {/* Quote */}
-                          <p className="font-sans text-md font-semibold leading-relaxed text-foreground md:text-lg">
+                          <p className="font-sans text-md font-medium leading-relaxed text-slate-200 md:text-lg">
                             &ldquo;{t.content}&rdquo;
                           </p>
                         </div>
 
                         {/* Author Info */}
-                        <div className="mt-6 flex flex-wrap items-center justify-between gap-4 border-t border-border/20 pt-4">
+                        <div className="mt-6 flex flex-wrap items-center justify-between gap-4 border-t border-white/5 pt-4">
                           <div>
-                            <h4 className="font-display text-lg font-black text-foreground">{t.name}</h4>
-                            <p className="font-retro text-xs text-muted-foreground uppercase">{t.role}</p>
+                            <h4 className="font-display text-lg font-black text-white">{t.name}</h4>
+                            <p className="font-mono text-[10px] font-semibold text-slate-400 uppercase tracking-wider">{t.role}</p>
                           </div>
-                          <span className={`inline-flex items-center gap-1 rounded border-2 border-border px-3 py-1 font-retro text-xs font-black shadow-[-2px_2px_0px_rgba(28,28,28,1)] bg-success/20 text-success-dark dark:text-success`}>
+                          <span className={`inline-flex items-center gap-1 rounded-full border border-success/20 px-3.5 py-1 font-mono text-xs font-semibold bg-success/15 text-success`}>
                             <Smile className="h-3.5 w-3.5" /> {t.revenue}
                           </span>
                         </div>
@@ -195,8 +188,8 @@ export function TestimonialsSection() {
             <button
               key={idx}
               onClick={() => setActiveIdx(idx)}
-              className={`h-3 rounded-full border border-border transition-all ${
-                idx === activeIdx ? 'w-8 bg-violet' : 'w-3 bg-card dark:bg-midnight-soft'
+              className={`h-2 rounded-full border border-white/10 transition-all cursor-pointer ${
+                idx === activeIdx ? 'w-8 bg-violet' : 'w-2 bg-[#140C20]'
               }`}
             />
           ))}

@@ -153,15 +153,15 @@ export function PricingSection() {
   };
 
   const borderColors = {
-    cyan: 'border-cyan hover:border-cyan-300 shadow-neon-cyan',
-    violet: 'border-violet hover:border-violet-300 shadow-neon-magenta',
-    mango: 'border-mango hover:border-mango-300 shadow-neon-green',
+    cyan: 'border-cyan/20 hover:border-cyan/40',
+    violet: 'border-violet/20 hover:border-violet/40',
+    mango: 'border-mango/20 hover:border-mango/45',
   };
 
   const textColors = {
-    cyan: 'text-cyan',
-    violet: 'text-violet',
-    mango: 'text-mango',
+    cyan: 'text-cyan-300',
+    violet: 'text-violet-300',
+    mango: 'text-mango-300',
   };
 
   const bgColors = {
@@ -171,9 +171,9 @@ export function PricingSection() {
   };
 
   return (
-    <section id="pricing" className="relative overflow-hidden border-t-4 border-border bg-snow py-20 dark:bg-midnight sm:py-28">
-      {/* Visual neon grids */}
-      <div className="absolute inset-0 bg-[radial-gradient(#1c1c1c_1px,transparent_1px)] bg-[size:32px_32px] opacity-[0.03] dark:bg-[radial-gradient(#ffffff_1px,transparent_1px)] dark:opacity-[0.02]" />
+    <section id="pricing" className="relative overflow-hidden border-t border-white/5 bg-midnight py-20 sm:py-28">
+      {/* Background Grid */}
+      <div className="absolute inset-0 bg-[linear-gradient(rgba(255,255,255,0.015)_1px,transparent_1px),linear-gradient(90deg,rgba(255,255,255,0.015)_1px,transparent_1px)] bg-[size:30px_30px]" />
 
       {/* Renders Confetti Particles in absolute window coords */}
       <div className="pointer-events-none fixed inset-0 z-[9999] overflow-hidden">
@@ -202,40 +202,37 @@ export function PricingSection() {
 
       <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 relative z-10">
         <div className="text-center">
-          <span className="inline-block rounded-md border-2 border-border bg-violet px-3 py-1 font-retro text-sm font-bold text-white shadow-[-2px_2px_0px_rgba(28,28,28,1)]">
-            INSERT COINS TO START
+          <span className="inline-block rounded-full border border-violet/30 bg-violet/15 px-4 py-1.5 font-mono text-[10px] font-bold tracking-wider text-violet-300">
+            PRICING OPTIONS
           </span>
-          <h2 className="mt-6 font-display text-4xl font-black uppercase tracking-tight text-foreground sm:text-6xl leading-none">
+          <h2 className="mt-6 font-display text-4xl font-black uppercase tracking-tight text-white sm:text-6xl leading-none">
             CHOOSE YOUR PLAYSTYLE
           </h2>
-          <p className="mx-auto mt-4 max-w-xl text-lg font-medium text-muted-foreground">
-            No long term contracts. Power up or downgrade modules instantly. Save more when feeding the console for a full year.
+          <p className="mx-auto mt-4 max-w-xl text-lg font-medium text-slate-300">
+            No long term contracts. Upgrade or downgrade modules instantly. Save 20% with annual plans.
           </p>
 
-          {/* Billing Toggle (Hyper Retro Style) */}
-          <div className="mt-10 inline-flex items-center gap-4 rounded-xl border-3 border-border bg-card p-2 shadow-[-3px_3px_0px_rgba(28,28,28,1)] dark:bg-midnight-soft">
-            <span className={`font-retro text-sm font-black transition-all ${!isAnnual ? 'text-violet scale-105' : 'text-muted-foreground'}`}>
-              MONTHLY MODE
-            </span>
+          {/* Billing Toggle (Sleek Switch Style) */}
+          <div className="mt-10 inline-flex items-center gap-4 rounded-full border border-white/10 bg-white/5 p-1.5 shadow-lg">
             <button
-              onClick={triggerConfetti}
-              className={`relative h-8 w-16 cursor-pointer rounded-lg border-2 border-border transition-colors ${
-                isAnnual ? 'bg-mango' : 'bg-violet'
-              } shadow-inner`}
+              onClick={() => setIsAnnual(false)}
+              className={`rounded-full px-4 py-2 text-xs font-bold transition-all cursor-pointer ${
+                !isAnnual ? 'bg-violet text-white shadow-md' : 'text-slate-400 hover:text-white'
+              }`}
             >
-              <motion.div
-                layout
-                transition={{ type: 'spring', stiffness: 400, damping: 20 }}
-                className="absolute top-0.5 left-0.5 h-5 w-7 rounded border border-border bg-white shadow-sm"
-                style={{ x: isAnnual ? 30 : 0 }}
-              />
+              MONTHLY
             </button>
-            <span className={`flex items-center gap-1.5 font-retro text-sm font-black transition-all ${isAnnual ? 'text-mango scale-105' : 'text-muted-foreground'}`}>
-              ANNUAL MODE
-              <span className="rounded bg-mango border border-border px-1.5 py-0.5 text-[10px] font-bold text-border">
-                -20% SAVE
+            <button
+              onClick={(e) => triggerConfetti(e)}
+              className={`flex items-center gap-1.5 rounded-full px-4 py-2 text-xs font-bold transition-all cursor-pointer ${
+                isAnnual ? 'bg-mango text-black shadow-md' : 'text-slate-400 hover:text-white'
+              }`}
+            >
+              ANNUAL
+              <span className={`rounded-full border border-black/10 bg-black/10 px-1.5 py-0.5 text-[9px] font-black ${isAnnual ? 'text-black' : 'text-mango'}`}>
+                SAVE 20%
               </span>
-            </span>
+            </button>
           </div>
         </div>
 
@@ -246,7 +243,6 @@ export function PricingSection() {
             const bColor = borderColors[plan.accent];
             const tColor = textColors[plan.accent];
             const bgColor = bgColors[plan.accent];
-            const hoverRotate = index % 2 === 0 ? 'hover:rotate-[0.5deg]' : 'hover:rotate-[-0.5deg]';
 
             return (
               <motion.div
@@ -254,48 +250,48 @@ export function PricingSection() {
                 initial={{ opacity: 0, y: 30 }}
                 whileInView={{ opacity: 1, y: 0 }}
                 viewport={{ once: true }}
-                className={`relative flex flex-col justify-between rounded-2xl border-3 border-border bg-card p-8 shadow-[-6px_6px_0px_0px_rgba(28,28,28,1)] transition-all duration-300 hover:-translate-y-2 hover:shadow-[-10px_10px_0px_0px_rgba(28,28,28,1)] dark:bg-midnight-raised ${bColor} ${hoverRotate} ${
-                  plan.popular ? 'lg:-translate-y-4 lg:hover:-translate-y-6 lg:border-violet shadow-neon-magenta' : ''
+                className={`relative flex flex-col justify-between rounded-2xl border border-white/10 bg-[#140C20]/40 p-8 shadow-2xl backdrop-blur-xl transition-all duration-300 hover:-translate-y-1 ${bColor} ${
+                  plan.popular ? 'lg:-translate-y-4 lg:hover:-translate-y-5 lg:border-violet/40' : ''
                 }`}
               >
                 {/* Popular Badge */}
                 {plan.popular && (
-                  <div className="absolute -top-4 left-1/2 -translate-x-1/2 rounded border-2 border-border bg-violet px-4 py-1 font-retro text-xs font-black text-white shadow-[-2px_2px_0px_rgba(28,28,28,1)] animate-bounce">
-                    ★ HYPE EDITION ★
+                  <div className="absolute -top-4 left-1/2 -translate-x-1/2 rounded-full border border-violet/20 bg-violet px-4 py-1.5 font-mono text-[9px] font-black text-black tracking-widest shadow-md">
+                    ★ POPULAR ★
                   </div>
                 )}
 
                 {/* Card Top */}
                 <div>
-                  <div className="flex items-center justify-between border-b border-border/20 pb-4">
-                    <span className="font-retro text-xs tracking-widest text-muted-foreground uppercase">
+                  <div className="flex items-center justify-between border-b border-white/5 pb-4">
+                    <span className="font-mono text-[9px] tracking-widest text-slate-500 uppercase">
                       SLOT {index + 1} // PLAN
                     </span>
-                    <span className={`font-retro text-xs font-bold ${tColor}`}>
+                    <span className={`font-mono text-[10px] font-bold ${tColor}`}>
                       {plan.stats.cpuLoad}
                     </span>
                   </div>
 
-                  <h3 className="mt-4 font-display text-2xl font-black text-foreground uppercase">
+                  <h3 className="mt-4 font-display text-2xl font-black text-white uppercase">
                     {plan.name}
                   </h3>
-                  <p className="mt-2 text-sm font-medium leading-relaxed text-muted-foreground">
+                  <p className="mt-2 text-sm font-semibold leading-relaxed text-slate-400">
                     {plan.tagline}
                   </p>
 
                   {/* Pricing Info */}
-                  <div className="mt-6 rounded-lg border-2 border-border bg-snow-soft p-4 shadow-inner dark:bg-midnight-soft relative overflow-hidden">
+                  <div className="mt-6 rounded-xl border border-white/5 bg-midnight/45 p-4 shadow-inner">
                     <div className="flex items-baseline gap-1">
-                      <span className="font-retro text-2xl text-foreground font-black">$</span>
-                      <span className="font-display text-5xl font-black text-foreground tracking-tight">
+                      <span className="font-mono text-2xl text-white font-bold">$</span>
+                      <span className="font-display text-5xl font-black text-white tracking-tight">
                         {price}
                       </span>
-                      <span className="font-retro text-sm text-muted-foreground uppercase font-black">
-                        {price === 0 ? '' : isAnnual ? '/ MO (ANNUAL)' : '/ MO'}
+                      <span className="font-mono text-xs text-slate-400 uppercase font-semibold">
+                        {price === 0 ? '' : isAnnual ? '/ mo (billed annually)' : '/ mo'}
                       </span>
                     </div>
                     {isAnnual && price > 0 && (
-                      <p className="mt-1 font-retro text-xs font-bold text-success">
+                      <p className="mt-1.5 font-mono text-[10px] font-bold text-success">
                         BILLING ${price * 12} COINS PER YEAR
                       </p>
                     )}
@@ -303,15 +299,15 @@ export function PricingSection() {
                 </div>
 
                 {/* Interactive Status Metrics */}
-                <div className="my-6 rounded-lg border border-border/40 bg-midnight/5 p-3 dark:bg-midnight/35">
-                  <div className="flex items-center justify-between font-retro text-[10px] text-muted-foreground">
+                <div className="my-6 rounded-xl border border-white/5 bg-midnight/35 p-3">
+                  <div className="flex items-center justify-between font-mono text-[9px] text-slate-400">
                     <span>METER: XP ACCEL</span>
                     <span className={`font-bold ${tColor}`}>{plan.stats.xpMultiplier}</span>
                   </div>
                   {/* Status healthbar */}
-                  <div className="mt-1.5 h-2 w-full rounded border border-border bg-midnight p-0.5">
+                  <div className="mt-1.5 h-2 w-full rounded-full border border-white/5 bg-midnight p-0.5">
                     <div
-                      className={`h-full rounded-sm ${plan.accent === 'violet' ? 'bg-violet' : plan.accent === 'cyan' ? 'bg-cyan' : 'bg-mango'}`}
+                      className={`h-full rounded-full ${plan.accent === 'violet' ? 'bg-violet' : plan.accent === 'cyan' ? 'bg-cyan' : 'bg-mango'}`}
                       style={{ width: `${plan.stats.meterVal}%` }}
                     />
                   </div>
@@ -319,36 +315,36 @@ export function PricingSection() {
 
                 {/* Features Checklist */}
                 <div className="flex-grow">
-                  <p className="font-retro text-xs font-black text-foreground uppercase border-b border-border/20 pb-2 mb-3">
+                  <p className="font-mono text-[10px] font-bold text-slate-400 uppercase tracking-widest border-b border-white/5 pb-2 mb-3">
                     INCLUDED PLUGINS
                   </p>
                   <ul className="space-y-3">
                     {plan.features.map((feature) => (
                       <li key={feature} className="flex items-start gap-2.5">
-                        <div className={`mt-0.5 flex h-4.5 w-4.5 items-center justify-center rounded border border-border shadow-[-1px_1px_0px_rgba(28,28,28,1)] ${bgColor}`}>
+                        <div className={`mt-0.5 flex h-4.5 w-4.5 items-center justify-center rounded-lg border border-white/10 ${bgColor}`}>
                           <Check className={`h-3 w-3 ${tColor}`} />
                         </div>
-                        <span className="text-sm font-semibold text-muted-foreground">{feature}</span>
+                        <span className="text-sm font-semibold text-slate-300">{feature}</span>
                       </li>
                     ))}
                   </ul>
                 </div>
 
                 {/* Action Button */}
-                <div className="mt-8 border-t border-border/20 pt-6">
+                <div className="mt-8 border-t border-white/5 pt-6">
                   <Link href={`/checkout/plan/${plan.id}`} className="block">
                     <Button
-                      className={`w-full py-6 font-display font-black text-md tracking-wider border-2 border-border shadow-[-3px_3px_0px_rgba(28,28,28,1)] active:translate-y-[3px] active:-translate-x-[3px] active:shadow-none hover:shadow-[-5px_5px_0px_rgba(28,28,28,1)] hover:-translate-y-1 transition-all ${
+                      className={`w-full py-6 font-display font-black text-md tracking-wider transition-all duration-200 active:scale-[0.98] ${
                         plan.popular
-                          ? 'bg-violet text-white hover:bg-violet-600'
-                          : 'bg-white text-border hover:bg-zinc-100 dark:bg-midnight dark:text-foreground dark:hover:bg-midnight-soft'
+                          ? 'bg-violet hover:bg-violet/90 text-white rounded-xl shadow-[0_4px_16px_rgba(255,0,184,0.3)]'
+                          : 'bg-midnight-raised hover:bg-midnight-soft text-white rounded-xl border border-white/10'
                       }`}
                       size="lg"
                     >
                       {plan.cta}
                     </Button>
                   </Link>
-                  <div className="mt-3 flex items-center justify-center gap-1.5 text-center font-retro text-[10px] text-muted-foreground font-black uppercase">
+                  <div className="mt-3 flex items-center justify-center gap-1.5 text-center font-mono text-[9px] text-slate-500 font-bold uppercase tracking-wider">
                     <Zap className="h-3 w-3 text-mango animate-pulse" /> INSTANT PROVISIONING ACTIVATED
                   </div>
                 </div>
